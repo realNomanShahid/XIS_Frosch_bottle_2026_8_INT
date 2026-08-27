@@ -1,0 +1,41 @@
+# ============================================================================
+# Frosch bottle inference pipeline — Python dependencies
+# ============================================================================
+# GPU-specific packages (torch, tensorrt, paddlepaddle-gpu) are usually NOT
+# installable via a plain `pip install` from this file alone — they need a
+# CUDA-matched wheel/index. See the notes under each one below, then run:
+#
+#   pip install -r requirements.txt
+#
+# ============================================================================
+
+# ---- Core vision / numerics ----
+opencv-python>=4.9.0
+numpy>=1.26.0
+
+# ---- Detection & segmentation backend ----
+# Install the CUDA build that matches your system, e.g.:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+torch>=2.2.0
+
+# Install the TensorRT wheel that matches your CUDA/driver version, e.g. via
+# NVIDIA's pip index (see https://developer.nvidia.com/tensorrt) or:
+#   pip install tensorrt
+tensorrt>=8.6.0
+
+supervision>=0.20.0
+
+# ---- OCR ----
+paddleocr>=2.7.0
+# paddleocr needs a matching PaddlePaddle GPU build, e.g.:
+#   pip install paddlepaddle-gpu -i https://www.paddlepaddle.org.cn/packages/stable/cu121/
+paddlepaddle-gpu>=2.6.0
+
+# ---- Camera acquisition (GenICam / Harvester) ----
+harvesters>=1.4.0
+# Also requires a GenTL producer (.cti) for your camera/vendor SDK, referenced
+# via CAMERA_CTI_PATH in live_inference.py — this is not a pip package.
+
+# ---- System / GPU monitoring ----
+psutil>=5.9.0
+nvidia-ml-py>=12.535.0   # provides the `pynvml` module used in live_inference.py
