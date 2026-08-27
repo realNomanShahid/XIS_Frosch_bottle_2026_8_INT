@@ -54,7 +54,7 @@ OCR  ·  Orientation  ·  Centricity  ·  Defect check
         ↓
 Bottle tracking + temporal validation
         ↓
-GOOD  /  DEFECTIVE  /  INCOMPLETE
+GOOD  /  DEFECTIVE  
         ↓
 Image saving + CSV / JSON / Video
 ```
