@@ -127,15 +127,6 @@ seg_model.wait()
 
 ## 10. Different Confidence Thresholds per Class
 
-**What we did**
-| Class     | Confidence |
-|-----------|------------|
-| bottle    | 0.70       |
-| label     | 0.35       |
-| capacity  | 0.35       |
-| bump      | 0.50       |
-| damage    | 0.30       |
-
 **Why it helps**
 - High threshold for bottle → fewer false bottles
 - Lower threshold for defects → less chance of missing real damage
