@@ -485,32 +485,6 @@ class PaddleCapacityReader:
         return int(best), avg_conf
 
 
-# ----------------------------------------------------------------------
-# TensorRT execution
-# ----------------------------------------------------------------------
-class PinnedFrameStager:
-    """Reusable pinned-host RGB staging buffer shared by both TensorRT engines."""
-
-    def __init__(self):
-        self.tensor = None
-        self.shape = None
-
-    def stage(self, frame):
-        """Convert a BGR frame to RGB and copy it into a pinned host tensor."""
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        h, w = rgb.shape[:2]
-        shape = (h, w, 3)
-        if self.tensor is None or self.shape != shape:
-            self.tensor = torch.empty(
-                shape,
-                dtype=torch.uint8,
-                pin_memory=True,
-            )
-            self.shape = shape
-        source = torch.from_numpy(np.ascontiguousarray(rgb))
-        self.tensor.copy_(source)
-        return self.tensor
-
 
 _FRAME_STAGER = PinnedFrameStager()
 
@@ -624,14 +598,6 @@ class TRTVisionEngine:
             self._host_outputs[name] = host_out
             self._output_numpy_views[name] = host_out.numpy()
 
-    def _ensure_gpu_rgb(self, rgb_host):
-        """(Re)allocate the device RGB staging buffer if the frame shape changed."""
-        if self._gpu_rgb_u8 is None or tuple(self._gpu_rgb_u8.shape) != tuple(rgb_host.shape):
-            self._gpu_rgb_u8 = torch.empty(
-                tuple(rgb_host.shape),
-                dtype=torch.uint8,
-                device="cuda",
-            )
 
     def enqueue_rgb(self, rgb_host):
         """Enqueue one frame's preprocessing + inference without blocking the CPU."""
@@ -713,15 +679,6 @@ class TRTVisionEngine:
             result[name] = host_out.float().numpy()
         return result
 
-    def decode_current(self, frame_shape, score_threshold, keep_masks=False):
-        """Decode this engine's already-synchronized outputs into sv.Detections."""
-        raw = self.outputs_numpy()
-        return decode_detector_output(
-            raw,
-            frame_shape,
-            score_threshold,
-            keep_masks=keep_masks,
-        )
 
     def infer(self, frame):
         """Blocking single-frame inference on this engine's dedicated stream."""
@@ -735,82 +692,6 @@ def logistic(x):
     """Numerically-safe sigmoid."""
     return 1.0 / (1.0 + np.exp(-np.clip(x, -88.0, 88.0)))
 
-
-def decode_detector_output(raw, frame_shape, score_threshold, keep_masks=False):
-    """Turn a raw RF-DETR dets/labels(/masks) dict into an sv.Detections object."""
-    if "dets" not in raw or "labels" not in raw:
-        raise RuntimeError(f"Expected dets/labels outputs, got {list(raw)}")
-
-    boxes_cwh = raw["dets"][0]
-    logits_all = raw["labels"][0]
-
-    logits = logits_all[:, :-1]
-    probs = logistic(logits)
-
-    flat = probs.reshape(-1)
-    k = min(boxes_cwh.shape[0], flat.size)
-    order = np.argsort(-flat, kind="stable")[:k]
-
-    scores = flat[order]
-    num_classes = probs.shape[1]
-    query_idx = order // num_classes
-    class_ids = order % num_classes
-
-    keep = scores > score_threshold
-    scores = scores[keep]
-    query_idx = query_idx[keep]
-    class_ids = class_ids[keep]
-
-    boxes = boxes_cwh[query_idx]
-    h, w = frame_shape[:2]
-
-    cx, cy, bw, bh = boxes.T
-    xyxy = np.stack(
-        [
-            (cx - bw / 2) * w,
-            (cy - bh / 2) * h,
-            (cx + bw / 2) * w,
-            (cy + bh / 2) * h,
-        ],
-        axis=1,
-    )
-
-    xyxy[:, [0, 2]] = np.clip(xyxy[:, [0, 2]], 0, w)
-    xyxy[:, [1, 3]] = np.clip(xyxy[:, [1, 3]], 0, h)
-
-    detections = sv.Detections(
-        xyxy=xyxy.astype(np.float32),
-        confidence=scores.astype(np.float32),
-        class_id=class_ids.astype(int),
-    )
-
-    detections.data["class_name"] = np.array(
-        [
-            CLASS_NAMES[int(cid)] if int(cid) < len(CLASS_NAMES)
-            else f"class_{int(cid)}"
-            for cid in class_ids
-        ],
-        dtype=object,
-    )
-
-    detections.data["_rfdetr_query_idx"] = query_idx.astype(np.int32)
-
-    if keep_masks and "masks" in raw:
-        raw_masks = raw["masks"][0]
-        selected_masks = raw_masks[query_idx]
-
-        mask_tensor = torch.from_numpy(selected_masks).float().unsqueeze(1)
-        mask_tensor = torch.nn.functional.interpolate(
-            mask_tensor,
-            size=(h, w),
-            mode="bilinear",
-            align_corners=False,
-        ).squeeze(1)
-
-        selected_masks_full = (mask_tensor.sigmoid() > 0.5).cpu().numpy()
-        detections.mask = selected_masks_full
-
-    return detections
 
 
 def run_single_engine_inference(runtime_model, frame, threshold, keep_masks=False):
