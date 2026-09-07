@@ -1,0 +1,22 @@
+# Pipeline 
+
+save_root: "results"
+save_annotated: true
+save_clean: true
+save_video: true
+save_csv: true
+save_json: true
+
+csv_name: "bottles_data.csv"
+json_name: "bottles_data.json"
+video_name: "live_stream.mp4"
+
+display: true
+profile: false
+
+
+annotated_root: "image_with_annotation"
+raw_root: "image_without_annotation"
+
+video_fps: 20.0
+crop_save_padding_px: 20

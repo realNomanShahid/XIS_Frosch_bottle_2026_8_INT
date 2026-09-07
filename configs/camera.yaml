@@ -1,0 +1,7 @@
+# Harvester / Vimba
+cti_path: "/home/xisai/Downloads/VimbaX_2026-2/cti/VimbaCameraSimulatorTL.cti" # adjust to your PC
+device_index: 0
+pixel_format: "BayerRG8"    # or whatever you use
+width: null                 # null = camera default
+height: null
+frame_rate: null

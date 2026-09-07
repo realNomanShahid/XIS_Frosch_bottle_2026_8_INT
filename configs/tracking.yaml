@@ -1,0 +1,11 @@
+iou_threshold: 0.40
+max_missing_frames: 20
+defect_confirm_streak: 1
+defect_overlap_thresh: 0.30
+defect_missing_tolerance: 1
+
+trigger_line_frac: 0.40      # 40% of frame width
+trigger_line_tolerance_px: 20
+
+full_view_x_margin_px: 20
+min_complete_bottle_area_px: 20000

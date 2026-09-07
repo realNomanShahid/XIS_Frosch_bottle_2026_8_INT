@@ -1,0 +1,14 @@
+# Segmentation model configuration (RF-DETR Seg Medium → TensorRT)
+
+
+engine_path: "output/rfdetr-seg-medium.trt"
+
+
+input_size: [576, 576]
+
+# Minimum score to keep a mask candidate before class / IoU filters
+score_threshold: 0.30
+
+# Binary mask threshold after sigmoid (decode)
+mask_binarize_threshold: 0.5
+

@@ -7,11 +7,8 @@ import torch
 import torch.nn.functional as F
 import tensorrt as trt
 import supervision as sv
+from src.config import load_all
 
-
-# ----------------------------------------------------------------------
-# Device setup
-# ----------------------------------------------------------------------
 COMPUTE_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if COMPUTE_DEVICE.type != "cuda":
@@ -19,10 +16,14 @@ if COMPUTE_DEVICE.type != "cuda":
 
 print(f"[OPT] Using device: {COMPUTE_DEVICE}")
 
-# Flipped on from live_inference.py once CLI args are parsed; gates the
-# per-engine GPU timing events recorded inside TRTVisionEngine.
+
 PROFILE_ENABLED = False
 
+
+cfg = load_all()
+iou_thr = cfg["tracking"]["iou_threshold"]
+max_tilt = cfg["geometry"]["max_allowed_tilt_deg"]
+engine = cfg["detection"]["engine_path"]
 
 def configure_profiling(enabled):
     """Enable/disable per-engine GPU timing from outside this module."""
@@ -32,58 +33,12 @@ def configure_profiling(enabled):
         print("[OPT] Lightweight profiling: enabled")
 
 
-# ----------------------------------------------------------------------
-# Model / class configuration
-# ----------------------------------------------------------------------
-LEGACY_DETECTION_CHECKPOINT = "runs/frosch_medium/checkpoint_best_regular.pth"
-LEGACY_SEGMENTATION_CHECKPOINT = "runs/frosch_seg_medium/checkpoint_best_total.pth"
 
-DETECTION_ENGINE_PATH = "output/rfdetr-medium.trt"
-SEGMENTATION_ENGINE_PATH = "output/rfdetr-seg-medium.trt"
 
-SEGMENTATION_SCORE_THRESHOLD = 0.30
-
-CLASS_CONFIDENCE_THRESHOLDS = {
-    "bottle":   0.70,
-    "label":    0.35,
-    "capacity": 0.35,
-    "bump":     0.50,
-    "damage":   0.30,
-    "scratch":  0.30,
-}
-
-BOTTLE_LABEL_NAME = "bottle"
-MAX_ALLOWED_TILT_DEG = 45.0
-
-DEFECT_OVERLAP_THRESH = 0.3
-
-CLASS_NAMES = [
-    "Frosch-bottle-UTNY-aUbJ-XBXs",
-    "bottle",
-    "bump",
-    "capacity",
-    "damage",
-    "label",
-    "scratch",
-]
-
-# ----------------------------------------------------------------------
-# OCR / capacity-crop configuration
-# ----------------------------------------------------------------------
-CAPACITY_CROP_PAD_FRAC = 0.60
-CAPACITY_CROP_PAD_PX = 25
-OCR_MIN_CROP_SIDE = 300
-KNOWN_CAPACITIES_ML = {100, 300, 500}
-
-# Kept for parity with the original tuning knob; the live loop drives its
-# own OCR cadence directly.
-OCR_EVERY_N_FRAMES = 15
-OCR_MIN_CONF = 0.18
 
 TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
 
-# Per-frame CUDA mask cache so repeated orientation/centroid/overlap look-ups
-# against the same NumPy mask don't repeatedly round-trip through the GPU.
+
 _FRAME_MASK_CACHE = {}
 
 

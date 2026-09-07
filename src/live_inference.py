@@ -1,4 +1,3 @@
-
 import argparse
 import csv
 import json
@@ -16,6 +15,20 @@ import pynvml
 from harvesters.core import Harvester
 
 import inference
+from src.config import load_all
+
+
+# ============================================================
+# Config (all thresholds / paths come from configs/*.yaml)
+# ============================================================
+CFG = load_all()
+DET = CFG["detection"]
+SEG = CFG["segmentation"]
+OCR_CFG = CFG["ocr"]
+GEOM = CFG["geometry"]
+TRACK = CFG["tracking"]
+PIPE = CFG["pipeline"]
+CAM = CFG["camera"]
 
 
 # ============================================================
@@ -51,8 +64,10 @@ def parse_cli_arguments():
 
 CLI_ARGS = parse_cli_arguments()
 
-CSV_LOG_PATH = "bottles_data.csv"
-JSON_LOG_PATH = "bottles_data.json"
+# Paths / names from pipeline config
+CSV_LOG_PATH = PIPE.get("csv_name", "bottles_data.csv")
+JSON_LOG_PATH = PIPE.get("json_name", "bottles_data.json")
+
 with open(CSV_LOG_PATH, "w", newline="") as f:
     writer = csv.writer(f)
     writer.writerow([
@@ -69,31 +84,28 @@ bottle_result_records = []
 INPUT_MODE = CLI_ARGS.input_mode
 FRAME_DIR = CLI_ARGS.frame_dir
 
-CAMERA_CTI_PATH = "/home/xisai/Downloads/VimbaX_2026-2/cti/VimbaCameraSimulatorTL.cti"
-DEFAULT_DETECTION_THRESHOLD = 0.4
-TRACK_IOU_THRESHOLD = 0.4
-TRACK_MAX_MISSING_FRAMES = 20
+# Camera
+CAMERA_CTI_PATH = CAM.get(
+    "cti_path",
+    "/home/xisai/Downloads/VimbaX_2026-2/cti/VimbaCameraSimulatorTL.cti",
+)
 
-CAPTURE_LINE_X_RATIO = 0.40
-CAPTURE_LINE_TOLERANCE_PX = 20
+# Detection / tracking (from config)
+DEFAULT_DETECTION_THRESHOLD = float(DET.get("score_threshold_default", 0.4))
+TRACK_IOU_THRESHOLD = float(TRACK.get("iou_threshold", 0.4))
+TRACK_MAX_MISSING_FRAMES = int(TRACK.get("max_missing_frames", 20))
 
-FULL_VIEW_X_MARGIN_PX = 20
+CAPTURE_LINE_X_RATIO = float(TRACK.get("trigger_line_frac", 0.40))
+CAPTURE_LINE_TOLERANCE_PX = int(TRACK.get("trigger_line_tolerance_px", 20))
 
-HORIZONTAL_CENTER_TOLERANCE = 0.15
+FULL_VIEW_X_MARGIN_PX = int(TRACK.get("full_view_x_margin_px", 20))
 
-CAP_TYPE_A_EXPECTED_V_OFFSET = 0.01
-CAP_TYPE_B_EXPECTED_V_OFFSET = 0.12
-CAP_TYPE_C_EXPECTED_V_OFFSET = 0.07
+# Geometry
+HORIZONTAL_CENTER_TOLERANCE = float(GEOM.get("horizontal_center_tolerance", 0.15))
+VERTICAL_OFFSET_TOLERANCE = float(GEOM.get("vertical_offset_tolerance", 0.05))
 
-VERTICAL_OFFSET_TOLERANCE = 0.05
-
-# Per-bottle expected label vertical-offset, keyed by the capacity (ml) read
-# off the bottle via OCR. This is always resolved from the detected capacity
-# now -- there is no manual/CLI override of the expected capacity anymore.
 CAPACITY_ML_TO_EXPECTED_V_OFFSET = {
-    500: CAP_TYPE_A_EXPECTED_V_OFFSET,
-    100: CAP_TYPE_B_EXPECTED_V_OFFSET,
-    300: CAP_TYPE_C_EXPECTED_V_OFFSET,
+    int(k): float(v) for k, v in GEOM.get("expected_v_offset", {}).items()
 }
 
 
@@ -105,31 +117,39 @@ def resolve_expected_v_offset(track=None, capacity=None):
     return CAPACITY_ML_TO_EXPECTED_V_OFFSET.get(cap)
 
 
-LABEL_MATCH_TOLERANCE_PX = 10
-CENTER_OFFSET_JUMP_TOLERANCE = 0.08
-CENTER_HISTORY_MIN_SAMPLES = 3
-CENTER_HISTORY_WINDOW_SIZE = 5
-MIN_RELIABLE_CENTER_SAMPLES = 3
-DEFECT_CONFIRM_STREAK = 1
-DEFECT_STREAK_GRACE_FRAMES = 1
-MIN_COMPLETE_BOTTLE_AREA_PX = 20000
+LABEL_MATCH_TOLERANCE_PX = int(GEOM.get("label_match_tolerance_px", 10))
+CENTER_OFFSET_JUMP_TOLERANCE = float(GEOM.get("spatial_jump_tolerance", 0.08))
+CENTER_HISTORY_MIN_SAMPLES = int(GEOM.get("min_history", 3))
+CENTER_HISTORY_WINDOW_SIZE = int(GEOM.get("history_window", 5))
+MIN_RELIABLE_CENTER_SAMPLES = int(GEOM.get("min_reliable_center_samples", 3))
 
-ANNOTATED_IMAGE_ROOT = os.path.join(os.getcwd(), "image_with_annotation")
-RAW_IMAGE_ROOT = os.path.join(os.getcwd(), "image_without_annotation")
+DEFECT_CONFIRM_STREAK = int(TRACK.get("defect_confirm_streak", 1))
+DEFECT_STREAK_GRACE_FRAMES = int(TRACK.get("defect_missing_tolerance", 1))
+MIN_COMPLETE_BOTTLE_AREA_PX = int(TRACK.get("min_complete_bottle_area_px", 20000))
+
+# Save roots / video
+ANNOTATED_IMAGE_ROOT = os.path.join(
+    os.getcwd(), PIPE.get("annotated_root", "image_with_annotation")
+)
+RAW_IMAGE_ROOT = os.path.join(
+    os.getcwd(), PIPE.get("raw_root", "image_without_annotation")
+)
 for _base in (ANNOTATED_IMAGE_ROOT, RAW_IMAGE_ROOT):
     os.makedirs(os.path.join(_base, "ok"), exist_ok=True)
     os.makedirs(os.path.join(_base, "defective"), exist_ok=True)
 
-CROP_SAVE_PADDING_PX = 20
-OUTPUT_VIDEO_PATH = os.path.join(os.getcwd(), "live_stream.mp4")
+CROP_SAVE_PADDING_PX = int(PIPE.get("crop_save_padding_px", 20))
+OUTPUT_VIDEO_PATH = os.path.join(
+    os.getcwd(), PIPE.get("video_name", "live_stream.mp4")
+)
 video_writer = None
-OUTPUT_VIDEO_FPS = 20.0
+OUTPUT_VIDEO_FPS = float(PIPE.get("video_fps", 20.0))
 
 PROFILE_ENABLED = bool(CLI_ARGS.profile)
 inference.configure_profiling(PROFILE_ENABLED)
 
 # ---------- Pipeline (detection + segmentation + OCR) ----------
-pipeline = inference.BottlePipeline(ocr_gpu=True)
+pipeline = inference.BottlePipeline(ocr_gpu=bool(OCR_CFG.get("use_gpu", True)))
 
 # NVML monitoring
 pynvml.nvmlInit()

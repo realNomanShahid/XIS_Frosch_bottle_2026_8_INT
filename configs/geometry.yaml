@@ -1,0 +1,25 @@
+max_allowed_tilt_deg: 45.0
+horizontal_center_tolerance: 0.15
+vertical_offset_tolerance: 0.05
+
+# capacity-specific expected V (label relative to bottle)
+expected_v_offset:
+  100: 0.12
+  300: 0.07
+  500: 0.01
+
+history_window: 5
+min_history: 3
+spatial_jump_tolerance: 0.08
+
+horizontal_center_tolerance: 0.15
+vertical_offset_tolerance: 0.05
+expected_v_offset:
+  100: 0.12
+  300: 0.07
+  500: 0.01
+label_match_tolerance_px: 10
+spatial_jump_tolerance: 0.08
+min_history: 3
+history_window: 5
+min_reliable_center_samples: 3

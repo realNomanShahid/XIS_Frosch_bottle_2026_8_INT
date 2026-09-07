@@ -1,0 +1,9 @@
+engine: "paddle"          # paddle only in your setup
+use_gpu: true
+min_confidence: 0.18
+known_capacities_ml: [100, 300, 500]
+crop_pad_frac: 0.15
+crop_pad_px: 10
+min_crop_side: 300
+ocr_every_n_frames: 5     # throttle
+
