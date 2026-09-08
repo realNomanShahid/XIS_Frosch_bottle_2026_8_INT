@@ -2,7 +2,6 @@ import argparse
 import csv
 import json
 import os
-import random
 import re
 import time
 from collections import Counter
@@ -64,9 +63,16 @@ def parse_cli_arguments():
 
 CLI_ARGS = parse_cli_arguments()
 
-# Paths / names from pipeline config
-CSV_LOG_PATH = PIPE.get("csv_name", "bottles_data.csv")
-JSON_LOG_PATH = PIPE.get("json_name", "bottles_data.json")
+# Paths / names from pipeline config.
+# NOTE: these used to be PIPE.get("key", <hardcoded default>) etc. across
+# this whole block. If a key was missing or misspelled in configs/*.yaml,
+# the pipeline would silently run on a value baked into this file instead
+# of failing - exactly what the handbook's fallback prohibition (§5.1.6)
+# and no-hardcoded-values rule (§5.1.5) exist to prevent. Direct indexing
+# means a missing key now raises KeyError immediately at startup instead
+# of being masked. Fixed 2026-09-08.
+CSV_LOG_PATH = PIPE["csv_name"]
+JSON_LOG_PATH = PIPE["json_name"]
 
 with open(CSV_LOG_PATH, "w", newline="") as f:
     writer = csv.writer(f)
@@ -85,27 +91,25 @@ INPUT_MODE = CLI_ARGS.input_mode
 FRAME_DIR = CLI_ARGS.frame_dir
 
 # Camera
-CAMERA_CTI_PATH = CAM.get(
-    "cti_path",
-    "/home/xisai/Downloads/VimbaX_2026-2/cti/VimbaCameraSimulatorTL.cti",
-)
+CAMERA_CTI_PATH = CAM["cti_path"]
 
-# Detection / tracking (from config)
-DEFAULT_DETECTION_THRESHOLD = float(DET.get("score_threshold_default", 0.4))
-TRACK_IOU_THRESHOLD = float(TRACK.get("iou_threshold", 0.4))
-TRACK_MAX_MISSING_FRAMES = int(TRACK.get("max_missing_frames", 20))
+# Detection / tracking (from config) - decision-relevant thresholds, so a
+# missing key must fail loud rather than silently use a value hardcoded here.
+DEFAULT_DETECTION_THRESHOLD = float(DET["score_threshold_default"])
+TRACK_IOU_THRESHOLD = float(TRACK["iou_threshold"])
+TRACK_MAX_MISSING_FRAMES = int(TRACK["max_missing_frames"])
 
-CAPTURE_LINE_X_RATIO = float(TRACK.get("trigger_line_frac", 0.40))
-CAPTURE_LINE_TOLERANCE_PX = int(TRACK.get("trigger_line_tolerance_px", 20))
+CAPTURE_LINE_X_RATIO = float(TRACK["trigger_line_frac"])
+CAPTURE_LINE_TOLERANCE_PX = int(TRACK["trigger_line_tolerance_px"])
 
-FULL_VIEW_X_MARGIN_PX = int(TRACK.get("full_view_x_margin_px", 20))
+FULL_VIEW_X_MARGIN_PX = int(TRACK["full_view_x_margin_px"])
 
 # Geometry
-HORIZONTAL_CENTER_TOLERANCE = float(GEOM.get("horizontal_center_tolerance", 0.15))
-VERTICAL_OFFSET_TOLERANCE = float(GEOM.get("vertical_offset_tolerance", 0.05))
+HORIZONTAL_CENTER_TOLERANCE = float(GEOM["horizontal_center_tolerance"])
+VERTICAL_OFFSET_TOLERANCE = float(GEOM["vertical_offset_tolerance"])
 
 CAPACITY_ML_TO_EXPECTED_V_OFFSET = {
-    int(k): float(v) for k, v in GEOM.get("expected_v_offset", {}).items()
+    int(k): float(v) for k, v in GEOM["expected_v_offset"].items()
 }
 
 
@@ -117,39 +121,33 @@ def resolve_expected_v_offset(track=None, capacity=None):
     return CAPACITY_ML_TO_EXPECTED_V_OFFSET.get(cap)
 
 
-LABEL_MATCH_TOLERANCE_PX = int(GEOM.get("label_match_tolerance_px", 10))
-CENTER_OFFSET_JUMP_TOLERANCE = float(GEOM.get("spatial_jump_tolerance", 0.08))
-CENTER_HISTORY_MIN_SAMPLES = int(GEOM.get("min_history", 3))
-CENTER_HISTORY_WINDOW_SIZE = int(GEOM.get("history_window", 5))
-MIN_RELIABLE_CENTER_SAMPLES = int(GEOM.get("min_reliable_center_samples", 3))
+LABEL_MATCH_TOLERANCE_PX = int(GEOM["label_match_tolerance_px"])
+CENTER_OFFSET_JUMP_TOLERANCE = float(GEOM["spatial_jump_tolerance"])
+CENTER_HISTORY_MIN_SAMPLES = int(GEOM["min_history"])
+CENTER_HISTORY_WINDOW_SIZE = int(GEOM["history_window"])
+MIN_RELIABLE_CENTER_SAMPLES = int(GEOM["min_reliable_center_samples"])
 
-DEFECT_CONFIRM_STREAK = int(TRACK.get("defect_confirm_streak", 1))
-DEFECT_STREAK_GRACE_FRAMES = int(TRACK.get("defect_missing_tolerance", 1))
-MIN_COMPLETE_BOTTLE_AREA_PX = int(TRACK.get("min_complete_bottle_area_px", 20000))
+DEFECT_CONFIRM_STREAK = int(TRACK["defect_confirm_streak"])
+DEFECT_STREAK_GRACE_FRAMES = int(TRACK["defect_missing_tolerance"])
+MIN_COMPLETE_BOTTLE_AREA_PX = int(TRACK["min_complete_bottle_area_px"])
 
 # Save roots / video
-ANNOTATED_IMAGE_ROOT = os.path.join(
-    os.getcwd(), PIPE.get("annotated_root", "image_with_annotation")
-)
-RAW_IMAGE_ROOT = os.path.join(
-    os.getcwd(), PIPE.get("raw_root", "image_without_annotation")
-)
+ANNOTATED_IMAGE_ROOT = os.path.join(os.getcwd(), PIPE["annotated_root"])
+RAW_IMAGE_ROOT = os.path.join(os.getcwd(), PIPE["raw_root"])
 for _base in (ANNOTATED_IMAGE_ROOT, RAW_IMAGE_ROOT):
     os.makedirs(os.path.join(_base, "ok"), exist_ok=True)
     os.makedirs(os.path.join(_base, "defective"), exist_ok=True)
 
-CROP_SAVE_PADDING_PX = int(PIPE.get("crop_save_padding_px", 20))
-OUTPUT_VIDEO_PATH = os.path.join(
-    os.getcwd(), PIPE.get("video_name", "live_stream.mp4")
-)
+CROP_SAVE_PADDING_PX = int(PIPE["crop_save_padding_px"])
+OUTPUT_VIDEO_PATH = os.path.join(os.getcwd(), PIPE["video_name"])
 video_writer = None
-OUTPUT_VIDEO_FPS = float(PIPE.get("video_fps", 20.0))
+OUTPUT_VIDEO_FPS = float(PIPE["video_fps"])
 
 PROFILE_ENABLED = bool(CLI_ARGS.profile)
 inference.configure_profiling(PROFILE_ENABLED)
 
 # ---------- Pipeline (detection + segmentation + OCR) ----------
-pipeline = inference.BottlePipeline(ocr_gpu=bool(OCR_CFG.get("use_gpu", True)))
+pipeline = inference.BottlePipeline(ocr_gpu=bool(OCR_CFG["use_gpu"]))
 
 # NVML monitoring
 pynvml.nvmlInit()
@@ -549,27 +547,25 @@ def finalize_track_measurements(track):
         v = "PASS" if abs(float(np.median(v_values)) - expected_v) <= VERTICAL_OFFSET_TOLERANCE else "FAIL"
     else:
         v = "Pending"
-    if h == "Pending" or v == "Pending":
-        fallback_box = track.get("best_complete_box")
-        fallback_label = track.get("best_complete_label_box")
-        if fallback_box is not None and fallback_label is not None:
-            bx_c = (fallback_box[0] + fallback_box[2]) / 2.0
-            by_c = (fallback_box[1] + fallback_box[3]) / 2.0
-            lx_c = (fallback_label[0] + fallback_label[2]) / 2.0
-            ly_c = (fallback_label[1] + fallback_label[3]) / 2.0
-            bw_c = max(1.0, float(fallback_box[2] - fallback_box[0]))
-            bh_c = max(1.0, float(fallback_box[3] - fallback_box[1]))
-            h_off_c = (lx_c - bx_c) / bw_c
-            v_off_c = (ly_c - by_c) / bh_c
-            if h == "Pending":
-                h = "PASS" if abs(h_off_c) <= HORIZONTAL_CENTER_TOLERANCE else "FAIL"
-                track["final_h_value"] = abs(h_off_c)
-            if v == "Pending" and expected_v is not None:
-                v = "PASS" if abs(v_off_c - expected_v) <= VERTICAL_OFFSET_TOLERANCE else "FAIL"
-                track["final_v_value"] = abs(v_off_c)
+    # NOTE: a prior version of this function used a single stored frame
+    # (`best_complete_box`) to turn a Pending H/V into PASS/FAIL when history
+    # was insufficient. That substituted one frame's value for a missing
+    # measurement, which the handbook's fallback prohibition (§5.1.6) does not
+    # allow, and it defeated the documented "Pending != FAIL" rule (a track
+    # could reach a GOOD/DEFECTIVE decision without ever having reliable
+    # history). Genuinely missing H/V now stays Pending and is reported as
+    # INCOMPLETE downstream, per the decision rule in README.md / A02.
     track["h_center"] = h
     track["v_center"] = v
     orientation = majority_vote(track.get("orientation_history", []))
+    if orientation is not None:
+        # BUG FIX 2026-09-08: this was computed but never assigned back to
+        # the track, so the tilt PASS/FAIL decision was silently falling
+        # through to whatever a single last frame set at lines ~1223/1321
+        # instead of the majority-vote-over-history rollup the H/V fields
+        # already use (median_of_valid) and the project spec documents
+        # ("History window 5, min history 3 ... median over history").
+        track["orientation"] = orientation
     h_numeric = median_of_valid([abs(v) for v in track.get("h_value_history", [])])
     v_numeric = median_of_valid([abs(v) for v in track.get("v_value_history", [])])
     if h_numeric is not None:

@@ -1,4 +1,3 @@
-
 import re
 
 import cv2
@@ -21,9 +20,41 @@ PROFILE_ENABLED = False
 
 
 cfg = load_all()
-iou_thr = cfg["tracking"]["iou_threshold"]
-max_tilt = cfg["geometry"]["max_allowed_tilt_deg"]
-engine = cfg["detection"]["engine_path"]
+
+
+DETECTION_ENGINE_PATH = cfg["detection"]["engine_path"]
+SEGMENTATION_ENGINE_PATH = cfg["segmentation"]["engine_path"]
+
+SEGMENTATION_SCORE_THRESHOLD = cfg["segmentation"]["score_threshold"]
+
+CLASS_CONFIDENCE_THRESHOLDS = cfg["detection"]["class_confidence_thresholds"]
+
+BOTTLE_LABEL_NAME = "bottle"
+MAX_ALLOWED_TILT_DEG = cfg["geometry"]["max_allowed_tilt_deg"]
+
+
+DEFECT_OVERLAP_THRESH = cfg["tracking"]["defect_overlap_thresh"]
+
+CLASS_NAMES = [
+    "Frosch-bottle-UTNY-aUbJ-XBXs",
+    "bottle",
+    "bump",
+    "capacity",
+    "damage",
+    "label",
+    "scratch",
+]
+
+
+CAPACITY_CROP_PAD_FRAC = cfg["ocr"]["crop_pad_frac"]
+CAPACITY_CROP_PAD_PX = cfg["ocr"]["crop_pad_px"]
+OCR_MIN_CROP_SIDE = cfg["ocr"]["min_crop_side"]
+KNOWN_CAPACITIES_ML = set(cfg["ocr"]["known_capacities_ml"])
+
+
+OCR_EVERY_N_FRAMES = cfg["ocr"]["ocr_every_n_frames"]
+OCR_MIN_CONF = cfg["ocr"]["min_confidence"]
+
 
 def configure_profiling(enabled):
     """Enable/disable per-engine GPU timing from outside this module."""
@@ -441,6 +472,30 @@ class PaddleCapacityReader:
 
 
 
+class PinnedFrameStager:
+    """Reusable pinned-host RGB staging buffer shared by both TensorRT engines."""
+
+    def __init__(self):
+        self.tensor = None
+        self.shape = None
+
+    def stage(self, frame):
+        """Convert a BGR frame to RGB and copy it into a pinned host tensor."""
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        h, w = rgb.shape[:2]
+        shape = (h, w, 3)
+        if self.tensor is None or self.shape != shape:
+            self.tensor = torch.empty(
+                shape,
+                dtype=torch.uint8,
+                pin_memory=True,
+            )
+            self.shape = shape
+        source = torch.from_numpy(np.ascontiguousarray(rgb))
+        self.tensor.copy_(source)
+        return self.tensor
+
+
 _FRAME_STAGER = PinnedFrameStager()
 
 
@@ -647,6 +702,83 @@ def logistic(x):
     """Numerically-safe sigmoid."""
     return 1.0 / (1.0 + np.exp(-np.clip(x, -88.0, 88.0)))
 
+
+
+def decode_detector_output(raw, frame_shape, score_threshold, keep_masks=False):
+    """Turn a raw RF-DETR dets/labels(/masks) dict into an sv.Detections object."""
+    if "dets" not in raw or "labels" not in raw:
+        raise RuntimeError(f"Expected dets/labels outputs, got {list(raw)}")
+
+    boxes_cwh = raw["dets"][0]
+    logits_all = raw["labels"][0]
+
+    logits = logits_all[:, :-1]
+    probs = logistic(logits)
+
+    flat = probs.reshape(-1)
+    k = min(boxes_cwh.shape[0], flat.size)
+    order = np.argsort(-flat, kind="stable")[:k]
+
+    scores = flat[order]
+    num_classes = probs.shape[1]
+    query_idx = order // num_classes
+    class_ids = order % num_classes
+
+    keep = scores > score_threshold
+    scores = scores[keep]
+    query_idx = query_idx[keep]
+    class_ids = class_ids[keep]
+
+    boxes = boxes_cwh[query_idx]
+    h, w = frame_shape[:2]
+
+    cx, cy, bw, bh = boxes.T
+    xyxy = np.stack(
+        [
+            (cx - bw / 2) * w,
+            (cy - bh / 2) * h,
+            (cx + bw / 2) * w,
+            (cy + bh / 2) * h,
+        ],
+        axis=1,
+    )
+
+    xyxy[:, [0, 2]] = np.clip(xyxy[:, [0, 2]], 0, w)
+    xyxy[:, [1, 3]] = np.clip(xyxy[:, [1, 3]], 0, h)
+
+    detections = sv.Detections(
+        xyxy=xyxy.astype(np.float32),
+        confidence=scores.astype(np.float32),
+        class_id=class_ids.astype(int),
+    )
+
+    detections.data["class_name"] = np.array(
+        [
+            CLASS_NAMES[int(cid)] if int(cid) < len(CLASS_NAMES)
+            else f"class_{int(cid)}"
+            for cid in class_ids
+        ],
+        dtype=object,
+    )
+
+    detections.data["_rfdetr_query_idx"] = query_idx.astype(np.int32)
+
+    if keep_masks and "masks" in raw:
+        raw_masks = raw["masks"][0]
+        selected_masks = raw_masks[query_idx]
+
+        mask_tensor = torch.from_numpy(selected_masks).float().unsqueeze(1)
+        mask_tensor = torch.nn.functional.interpolate(
+            mask_tensor,
+            size=(h, w),
+            mode="bilinear",
+            align_corners=False,
+        ).squeeze(1)
+
+        selected_masks_full = (mask_tensor.sigmoid() > 0.5).cpu().numpy()
+        detections.mask = selected_masks_full
+
+    return detections
 
 
 def run_single_engine_inference(runtime_model, frame, threshold, keep_masks=False):
