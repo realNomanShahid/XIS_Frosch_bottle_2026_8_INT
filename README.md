@@ -5,7 +5,6 @@ Live computer-vision system for inspecting Frosch bottles on a production line o
 The pipeline detects bottles, measures label orientation and centricity, validates defects against the bottle mask, reads capacity via OCR, and classifies each bottle as **GOOD**, **DEFECTIVE**, or **INCOMPLETE**.
 
 ---
-
 ## Features
 
 - Live camera inference (Vimba X + Harvester) or folder of images
