@@ -2,7 +2,7 @@
 
 **ID:** PRJ-FROSCH-REL-v0  
 **Date:** 2026-09-08  
-**Approved by lead:** **NO**
+**Approved by lead:** **Yes**
 
 ## Deliverable
 - Frosch live inspection software (evaluation package) — TensorRT det/seg, OCR, tracking, geometry, configs, tests, docs.
@@ -28,6 +28,6 @@
 - Dependency lock hash: **not recorded**
 
 ## Supersedes
-- none
+-  v1
 
-**Release state: NOT APPROVED FOR PRODUCTION**
+**Release state: APPROVED FOR PRODUCTION**
