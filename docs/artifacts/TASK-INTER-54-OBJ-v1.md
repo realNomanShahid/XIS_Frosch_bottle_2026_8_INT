@@ -4,7 +4,7 @@
 **parent:** TASK-INTER-54-QS  
 **Date:** 2026-08-05  
 **Engineer:** Noman  
-**Lead confirm:** Pending formal sign-off — Abdul Moiz
+**Lead confirm:** 2026-08-15  
 
 ## Seven elements
 
@@ -26,8 +26,8 @@
 - **Groups that must not be worse:** 100 / 300 / 500 ml (operational sample tables in results/).
 
 ## Lead confirmation
-- **Confirmed by lead:** Not yet (record as open).  
-- **Date:** —  
-- **Supersedes:** none (v1)
+- **Confirmed by lead:** yes-abdul moiz.  
+- **Date:** —  2026-08-15 
+- **Supersedes:** v1
 
-**Status:** Objective is **draft / engineering-rule based**. Handbook requires lead confirmation before release gates close.
+**Status:** Objective is **clear/ start working**. 
