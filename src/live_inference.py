@@ -1552,8 +1552,6 @@ finally:
     print(f"Defective Bottles: {total_bottles_defective}")
     if bottle_fps_sample_count > 0:
         average_bottle_fps = bottle_fps_accumulator / bottle_fps_sample_count
-        noise = random.randint(5, 7)
-        average_bottle_fps += noise
         print(f"Average FPS (bottle detected only): {average_bottle_fps:.2f}")
     else:
         print("Average FPS (bottle detected only): N/A")
