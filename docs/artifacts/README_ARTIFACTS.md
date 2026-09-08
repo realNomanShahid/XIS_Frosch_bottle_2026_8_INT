@@ -30,7 +30,7 @@
 | A16 | EXC-NONE.md | No exception |
 | A17 | PRJ-FROSCH-MPR-v1.md | Sample metrics |
 
-## Honest gaps (do not hide in meeting)
+## Honest gaps 
 1. A02 not lead-confirmed; no signed numeric targets.  
 2. A05 annotation QA not done by engineer.  
 3. A09 independent validation not done.  
@@ -38,5 +38,3 @@
 5. Checkpoint SHA / lock hashes missing.  
 6. OCR `00ml` display and mask-missing→fail need Lead review vs fallback rules.
 
-## Place in repo
-Copy this folder to e.g. `docs/artifacts/` or `compliance/artifacts/` (OneDrive remains authoritative store per handbook).
