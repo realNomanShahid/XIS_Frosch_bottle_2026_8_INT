@@ -30,7 +30,7 @@
 | A16 | EXC-NONE.md | No exception |
 | A17 | PRJ-FROSCH-MPR-v1.md | Sample metrics |
 
-## Honest gaps 
+## Honest Gaps 
 1. A02 not lead-confirmed; no signed numeric targets.  
 2. A05 annotation QA not done by engineer.  
 3. A09 independent validation not done.  
