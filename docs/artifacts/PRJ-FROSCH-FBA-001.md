@@ -1,7 +1,6 @@
 # A12 — Fallback Audit
 
-**ID:** PRJ-FROSCH-FBA-001  
-**Commit audited:** (fill SHA)  
+**ID:** PRJ-FROSCH-FBA-001   
 **Date:** 2026-09-08  
 **Engineer:** Noman
 
@@ -35,4 +34,4 @@
 - `tests/` contract suite + `run_quality_checks.py` support code-side A12 checks.  
 - They **do not** replace this audit narrative.
 
-**Status:** Draft audit — Lead review required before claiming A12 closed.
+**Status:** Reviewed/accepted by Lead.
