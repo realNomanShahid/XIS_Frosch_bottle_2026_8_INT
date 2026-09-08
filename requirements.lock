@@ -1,0 +1,17 @@
+# requirements.lock
+
+opencv-python==4.10.0.84
+numpy==1.26.4
+
+torch==2.2.2
+tensorrt==8.6.13
+supervision==0.20.0
+
+paddleocr==2.7.3
+paddlepaddle-gpu==2.6.1
+
+harvesters==1.4.0
+
+psutil==5.9.8
+nvidia-ml-py==12.535.133
+PyYAML==6.0.1
