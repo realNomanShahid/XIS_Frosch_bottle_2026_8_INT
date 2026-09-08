@@ -1,7 +1,7 @@
 iou_threshold: 0.40
 max_missing_frames: 20
 defect_confirm_streak: 1
-defect_overlap_thresh: 0.30
+defect_overlap_thresh: 0.20
 defect_missing_tolerance: 1
 
 trigger_line_frac: 0.40      # 40% of frame width
