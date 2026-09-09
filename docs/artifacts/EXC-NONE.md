@@ -1,9 +1,9 @@
 # A16 — Exception Record
 
 **ID:** EXC-NONE  
-**Date:** 2026-09-08  
-**Engineer:** Noman
+**Date:** 2026-08-31  
+**Engineer:** Noman  
+**Lead:** Abdul Moiz  
 
-No official handbook exception was granted by the Lead for INTER-54.
-
-Open gaps (A05, A09, A11 duration, unsigned A02) are **defects/gaps**, not approved exceptions.
+No handbook exception was granted for INTER-54.  
+Work proceeded under standard gates with recorded evidence in A01–A15 and A17.

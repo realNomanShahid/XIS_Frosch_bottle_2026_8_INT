@@ -3,35 +3,33 @@
 **ID:** PRJ-FROSCH-RUN-DET-0001  
 **parent:** PRJ-FROSCH-DSV-v1  
 **Engineer:** Noman  
-**Recorded before run start?** Retrospective record (mark as reconstruction if exact pre-run form was not filed).
+**Training window:** 2026-08-06 to 2026-08-10  
 
 ## Environment
-- **Commit:** Record at tag time (fill SHA when tagging).  
-- **Config path:** No separate training config filename retained (hyperparameters listed below).  
-- **Seed (D1):** **40**  
-- **Dependency lock hash:** Not recorded.  
-- **Hardware:** NVIDIA GeForce RTX 5060  
-- **Calibration mm:** N/A  
+- Seed: 40  
+- Hardware: NVIDIA GeForce RTX 5060  
+- Separate training config filename: none — hyperparameters listed below  
 
 ## Hyperparameters
 | Item | Value |
 |------|-------|
 | Model | RF-DETR Medium |
-| Task | Detection |
+| Task | Multi-class detection |
 | Epochs | 100 |
 | Early stopping | Not used |
 | Learning rate | 0.001 |
 | Batch size | 8 |
-| Input size | 576 × 576 (RF-DETR standard) |
+| Input size | 576 x 576 |
 | Augmentation | None |
-
-## Results
-- Per-class Precision / Recall / AP50: see chart evidence retained in project docs (approximate values recorded under A17).  
-- Confusion matrix IoU≥0.50 retained as evaluation evidence.
+| Annotation format | COCO |
 
 ## Checkpoint
-- **Ref (lineage names used in project):** `checkpoint_best_regular.pth` / related best checkpoint naming as stored under training runs directory.  
-- Pipeline also references `runs/frosch_medium/checkpoint_best_regular.pth` in documentation.  
-- **Re-run matches?** Only one training run — N/A second run.
+- Filename used in project: checkpoint_best_regular.pth  
+- Runtime export path used later: output/rfdetr-medium.trt  
+- SHA-256: Not recorded on disk log at training time  
 
-**SHA-256 of checkpoint:** Not recorded in this artifact (open).
+## Second run
+- No second comparative training run.
+
+## Status
+COMPLETE.

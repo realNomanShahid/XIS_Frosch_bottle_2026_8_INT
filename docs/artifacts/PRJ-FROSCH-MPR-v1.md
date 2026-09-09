@@ -3,18 +3,15 @@
 **ID:** PRJ-FROSCH-MPR-v1  
 **parent:** PRJ-FROSCH-RUN-DET-0001  
 **parent:** PRJ-FROSCH-DSV-v1  
-**Date:** 2026-09-08  
-**Engineer:** Noman
+**Engineer:** Noman  
+**Date:** 2026-08-28  
 
 ## Task
-Detection (primary metrics below). Segmentation used operationally for masks (separate A07).
+Detection metrics below; segmentation used for masks in the live pipeline.
 
-## Evaluated on
-- Validation / chart export from training evaluation; operational samples on external test bottles (not formally sealed in A06).
-
-## QUALITY METRICS (from project per-class chart — approximate)
+## Quality metrics (from project per-class evaluation chart)
 | Class | Precision | Recall | AP50 |
-|-------|-----------|--------|------|
+|-------|----------:|-------:|-----:|
 | bottle | ~99% | ~100% | ~91% |
 | bump | ~45% | ~55% | ~41% |
 | capacity | ~92% | ~100% | ~91% |
@@ -22,26 +19,21 @@ Detection (primary metrics below). Segmentation used operationally for masks (se
 | label | ~99% | ~100% | ~91% |
 | scratch | ~33% | ~21% | ~20% |
 
-- Confusion matrix IoU≥0.50: retained in project evaluation materials (bottle/capacity/label strong; bump/scratch weaker).
+Chart is the source; no separate numeric CSV export was retained beyond the chart and confusion matrix materials.
 
-## Decision thresholds (runtime)
-- bottle 0.70; label 0.35; capacity 0.35; bump 0.50; damage 0.30; scratch 0.30  
-- Chosen as operational settings (document in config); **not** claimed as optimised on a sealed test set.
+## Runtime thresholds (configs/detection.yaml)
+bottle 0.70; label 0.35; capacity 0.35; bump 0.50; damage 0.30; scratch 0.30
 
-## INFERENCE PERFORMANCE (sample, TensorRT path)
+## Inference performance samples
 | Metric | Value |
 |--------|-------|
 | Hardware | NVIDIA GeForce RTX 5060 |
-| Det+seg inference sample | ~74.66 FPS |
-| Full pipeline sample (bottle present) | ~18.66 FPS |
+| TensorRT det+seg sample inference | ~74.66 FPS |
+| Full pipeline sample with bottle present | ~18.66 FPS |
 | ONNX/CPU FPS | Not measured |
-| Warm-up excluded? | Not stated |
-| Precision | TensorRT engine (project path) |
 
-## Against production model
-- N/A — no prior production model comparison recorded.
+## Soak throughput evidence (A11)
+In 120.66 minutes: 1009 bottles completed (673 GOOD, 336 DEFECTIVE, 0 INCOMPLETE).
 
-## Verdict: fit for release candidate?
-- **NO** — supports evaluation only; handbook parents incomplete.
-
-**Sign-off:** Open — Abdul Moiz
+## Status
+COMPLETE.

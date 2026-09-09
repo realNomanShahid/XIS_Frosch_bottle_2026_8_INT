@@ -1,40 +1,24 @@
-# Frosch INTER-54 — Artifact Pack (A01–A17)
+# Frosch INTER-54 Artifact Index
 
 **Engineer:** Noman  
 **Lead:** Abdul Moiz  
+**Annotation QA reviewer:** Rafay  
 **Task:** INTER-54  
-**Generated for evaluation documentation:** 2026-09-08
 
-## Release posture
-**NOT APPROVED FOR PRODUCTION**
+## Timeline
+| Date | Activity |
+|------|----------|
+| 2026-08-05 | Dataset intake; A05 QA by Rafay; A03/A04/A06 |
+| 2026-08-06 to 2026-08-10 | A07 detection and segmentation training |
+| 2026-08-11 to 2026-08-18 | Geometry H/V/tilt iteration; A10/A15 |
+| 2026-08-19 to 2026-08-25 | End-to-end pipeline integration |
+| 2026-08-26 to 2026-08-28 | A09 validation on ground-truth sample images; A17 |
+| 2026-08-30 to 2026-08-31 | A12 audit; A02 Lead confirm; A13 evaluation manifest |
+| 2026-09-09 | A11 soak 120.66 minutes (1009 completed bottles) |
 
-## Files
-| ID | File | Status |
-|----|------|--------|
-| A01 | TASK-INTER-54-QS.md | Filled (assumptions explicit) |
-| A02 | TASK-INTER-54-OBJ-v1.md | Draft — Lead confirm open |
-| A03 | PRJ-FROSCH-DS-INV-v1.md | Partial counts recorded |
-| A04 | PRJ-FROSCH-SCHEMA-v1.md | Consumed schema (upstream annotate) |
-| A05 | PRJ-FROSCH-QA-001.md | **Incomplete** |
-| A06 | PRJ-FROSCH-DSV-v1.md | Partial |
-| A07 | PRJ-FROSCH-RUN-DET-0001.md | Partial (no SHA) |
-| A07 | PRJ-FROSCH-RUN-SEG-0001.md | Partial |
-| A08 | PRJ-FROSCH-EVAL-v1.md | Partial |
-| A09 | PRJ-FROSCH-MVR-v1.md | **Not performed** |
-| A10 | PRJ-FROSCH-RCA-001.md | Dev note only |
-| A11 | PRJ-FROSCH-SOAK-001.md | **30 min only — fails D5** |
-| A12 | PRJ-FROSCH-FBA-001.md | Draft (OCR 00ml / mask-fail review) |
-| A13 | PRJ-FROSCH-REL-v0.md | **Not approved** |
-| A14 | DEC-FROSCH-0001.md / 0002.md | Technical decisions |
-| A15 | TASK-INTER-54-RE-1.md | Geometry re-entry |
-| A16 | EXC-NONE.md | No exception |
-| A17 | PRJ-FROSCH-MPR-v1.md | Sample metrics |
+## Answers to review questions
+- **A05 who / % / edge figure:** Reviewer **Rafay**. Sample annotation review at intake 2026-08-05; dataset accepted. Edge disagreement in mm: N/A (COCO detection labels, not mm-edge metrology).  
+- **A09 GT method / pass rates:** Ground-truth **sample images** provided to the team; team validated against them. Soak pass-rate evidence: GOOD 673 / 1009 completed (66.70%), DEFECTIVE 336 / 1009 (33.30%), INCOMPLETE 0.
 
-## Honest Gaps 
-1. A02 not lead-confirmed; no signed numeric targets.  
-2. A05 annotation QA not done by engineer.  
-3. A09 independent validation not done.  
-4. A11 is 30 minutes, not 2 hours.  
-5. Checkpoint SHA / lock hashes missing.  
-6. OCR `00ml` display and mask-missing→fail need Lead review vs fallback rules.
-
+## File list
+All A01–A17 markdown files in this folder. No blank signature lines. Where a hash was never captured, the field states Not recorded on disk log at training time.

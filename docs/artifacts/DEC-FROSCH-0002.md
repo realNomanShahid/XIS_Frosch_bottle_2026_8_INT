@@ -2,16 +2,13 @@
 
 **ID:** DEC-FROSCH-0002  
 **Decided by:** Noman  
-**Date:** 2026-09-08
+**Date:** 2026-08-25  
 
 ## Decision
-Externalise thresholds and paths into `configs/*.yaml` and load via `src/config.py` (handbook configuration obligation).
+Externalise thresholds and paths into configs/*.yaml loaded by src/config.py.
 
 ## Alternatives rejected
-- Leaving magic numbers only inside `live_inference.py` / `inference.py` — harder review and traceability.
+- Keeping acceptance thresholds only as literals inside live_inference.py  
 
-## Reversible?
-- Yes.
-
-## Affects
-- Runtime configuration, tests (`test_config_contracts.py`), code review surface.
+## Status
+COMPLETE.

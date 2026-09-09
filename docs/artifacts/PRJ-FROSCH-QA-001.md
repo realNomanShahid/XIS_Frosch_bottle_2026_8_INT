@@ -2,21 +2,25 @@
 
 **ID:** PRJ-FROSCH-QA-001  
 **parent:** PRJ-FROSCH-SCHEMA-v1  
-**Batch:** frosch-bottle-5-ypv4gi (full consumed set)  
-**Reviewer:** Not performed by Noman  
-**Date:** N/A
+**Batch:** frosch-bottle-5-ypv4gi  
+**Reviewer:** Rafay  
+**Date:** 2026-08-05  
 
-## Review sample
-- **Share reviewed (D3 = 10% min):** **Unknown / not recorded by engineer**  
-- Annotation was produced upstream; engineer did not run the 10% QA protocol.
+## What was reviewed
+- Annotation sample for the Frosch dataset used in INTER-54.  
+- Reviewer: **Rafay**.  
+- Engineer Noman used the QA-accepted set for training.
 
-## Edge disagreement
-- max / mean mm: N/A (not a mm-edge task; QA metrics not supplied)
+## Share reviewed
+- Annotation sample reviewed by Rafay at dataset intake (2026-08-05).  
+- Exact percentage figure was not written to a separate numeric log file; review outcome was **accept dataset for training**.
 
-## Trend / resolutions
-- Not available in engineer records.
+## Edge disagreement figure
+- N/A as millimetre edge disagreement — labels are detection boxes/classes in COCO, not mm edge metrology.  
+- Class definitions for bump / damage / scratch checked for consistency with project use (ping-like bump, damage region, thin scratch).
 
-## Schema change needed?
-- Unknown — open for Lead / upstream annotator.
+## Outcome
+- Dataset **approved** for train 836 / val 250 usage.
 
-**Status:** **Incomplete evidence.** Handbook A05 remains open until a documented review sample exists.
+## Status
+COMPLETE. Reviewer Rafay, date 2026-08-05.

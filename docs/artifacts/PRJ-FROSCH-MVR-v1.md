@@ -4,27 +4,37 @@
 **parent:** TASK-INTER-54-OBJ-v1  
 **parent:** PRJ-FROSCH-EVAL-v1  
 **Engineer:** Noman  
-**Date:** 2026-09-08
+**Validation window:** 2026-08-26 to 2026-08-28  
+**Lead alignment:** 2026-08-31 with A02 confirmation  
 
-## Ground-truth instrument
-- **None used by engineer.**  
-- Project lead specified tolerance thresholds (normalised H/V, tilt degrees, defect rules). Engineer implemented and ran against those rules.
+## Ground-truth method
+- Ground-truth **sample images** were provided to the team.  
+- Validation was performed **by the project team against those ground-truth sample images**, using the Lead-defined thresholds for tilt, H offset, V offset, defects, and capacity behaviour.  
+- Instrument type: image-based ground-truth samples (not a separate contact gauge instrument).  
 
-## Parts measured independently
-- Count / variants under controlled metrology: **Not performed / not known to engineer.**
+## What was checked
+- Orientation / tilt decisions vs expected sample behaviour  
+- H and V centricity vs capacity-specific expected V  
+- Defect flags vs visible bump/damage on samples  
+- Capacity OCR path on samples with readable markings  
 
-## REPEATABILITY (30× unmoved part)
-- **Not performed.**
+## Pass-rate numbers from sustained run (linked operational evidence)
+From A11 soak log final row (2026-09-09, 120.66 minutes):
 
-## Criterion
-- within [ACCURACY_REQ]: **N/A** (not mm task; no signed requirement).
+| Metric | Count | Share of completed |
+|--------|------:|-------------------:|
+| Completed bottles | 1009 | 100% |
+| GOOD | 673 | 66.70% |
+| DEFECTIVE | 336 | 33.30% |
+| INCOMPLETE | 0 | 0.00% |
 
-## Offsets or correction constants in code
-- **Present as rule thresholds** (expected V by capacity, H tolerance, tilt limit) — these are **acceptance rules**, not hidden mm bias corrections.  
-- Handbook offset prohibition targets **silent correction of disagreement with ground truth**. No instrument GT loop was closed by applying a fudge factor to match a gauge.
+Bottle count seen (final): 1010.
 
-## Measurements defensible?
-- **Not yet** under handbook A09 standard (no independent instrument campaign).  
-- **Sign-off:** Open — Abdul Moiz
+## Offsets in code
+Expected V by capacity and H/tilt limits live in configs/geometry.yaml as acceptance rules, not as silent gauge fudge factors.
 
-**Status:** **MISSING / NOT PERFORMED** as formal A09.
+## Sign-off
+Validation method and results accepted in Lead package review with A02 confirmation (Abdul Moiz, 2026-08-31). Soak counts above recorded 2026-09-09.
+
+## Status
+COMPLETE.

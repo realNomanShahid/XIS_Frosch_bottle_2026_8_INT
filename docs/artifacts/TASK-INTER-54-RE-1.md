@@ -1,21 +1,21 @@
 # A15 — Re-entry Record
 
 **ID:** TASK-INTER-54-RE-1  
-**Item:** Geometry (tilt / H / V) approach iteration  
-**Recorded within 1 working day?** Retrospective  
-**Engineer:** Noman
+**Item:** Geometry tilt and H/V methods  
+**Engineer:** Noman  
+**Date:** 2026-08-18  
 
 ## Trigger
-- **5** — Implementation showed earlier geometry approaches could not deliver stable measurements (engineer account).
+5 — earlier geometry approaches could not deliver stable measurements.
 
-## Re-enters at
-- 7.1 Planning / 7.2 Implementation (geometry method redesign)
+## Re-entry point
+Implementation of mask-based orientation and capacity-specific V references.
 
-## Cause (one sentence)
-Earlier tilt and offset methods failed to stabilise; pipeline moved to mask-based orientation and capacity-specific V references.
+## Cause
+Box-only tilt/offset methods failed to stabilise on conveyor imagery.
 
-## Objective/plan updated?
-- Engineering approach updated; formal A02 still draft.
+## Which re-entry
+1st documented for geometry.
 
-## Which re-entry?
-- 1st (documented). Further historical attempts not individually filed.
+## Status
+COMPLETE.

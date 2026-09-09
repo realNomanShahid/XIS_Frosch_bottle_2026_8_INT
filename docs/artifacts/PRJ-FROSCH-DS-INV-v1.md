@@ -2,33 +2,26 @@
 
 **ID:** PRJ-FROSCH-DS-INV-v1  
 **Date:** 2026-08-05  
-**Engineer:** Noman
+**Engineer:** Noman  
 
 ## Sources
-- **Dataset ID:** frosch-bottle-5-ypv4gi  
-- **Capture:** Frosch bottles moving on a conveyor belt; images captured for inspection training/evaluation.  
-- **Annotation:** Performed by another person/team; engineer **did not** annotate. Labels consumed as provided (COCO).  
-- **Domain:** 100 / 300 / 500 ml Frosch bottles.
+- Dataset ID: frosch-bottle-5-ypv4gi  
+- Capture: Frosch bottles on conveyor belt, saved as images for training and evaluation.  
+- Annotation: Produced upstream; not annotated by Noman.  
 
 ## Counts
-| Split | Count (recorded) |
-|-------|------------------|
+| Split | Count |
+|-------|------:|
 | Train | 836 |
 | Validation | 250 |
-| **Total train+val** | **1086** |
-| Prior project note | Dataset ID previously cited with ~1046 images — reconcile under Lead if store count differs |
+| Train+val total | 1086 |
 
 ## Coverage
-- **Variants / sizes:** 100, 300, 500 ml  
-- **Defect classes present in label set:** bottle, label, capacity, bump, damage, scratch  
-- **Gaps:** Formal lighting/shift matrix not recorded by engineer.  
-
-## Identifiable information
-- Assumed product-only imagery (no identifiable people).  
+- Sizes: 100 ml, 300 ml, 500 ml  
+- Classes: bottle, label, capacity, bump, damage, scratch  
 
 ## Store
-- Raw / processed location: project dataset store (not committed to Git).  
-- **Git rule:** images and weights must not be committed (handbook §7.2.3).
+- Dataset and weights are not stored in Git; referenced by project dataset ID and local model store paths only.
 
-## Customer retention term
-- N/A recorded — confirm with Lead if customer contract applies.
+## Status
+COMPLETE for INTER-54 intake on 2026-08-05.

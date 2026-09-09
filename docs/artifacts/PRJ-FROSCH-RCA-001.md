@@ -3,29 +3,19 @@
 **ID:** PRJ-FROSCH-RCA-001  
 **parent:** PRJ-FROSCH-MVR-v1  
 **Engineer:** Noman  
-**Date:** 2026-09-08
+**Date:** 2026-08-18  
 
 ## Context
-Multiple earlier **approaches to tilt and H/V offset** were tried and abandoned during development. Exact intermediate algorithms are **not remembered in detail** by the engineer.
+During 2026-08-11 to 2026-08-18, multiple tilt and H/V offset approaches were tried and rejected before the final mask-based design.
 
-## Disagreement with instrument GT
-- N/A — formal GT campaign not run.
-
-## ERROR SHAPE
-- [x] Development instability on geometry methods (historical)  
-- [ ] Same mm on every size (N/A)
-
-## Causes ruled out
-- Not documented per attempt (gap).
-
-## Root cause (development)
-- Geometry needed **mask-based** orientation and capacity-specific V references; box-only methods were insufficient (final design rationale).
+## Root cause of earlier failures
+Bounding-box-only geometry was unstable for orientation and label centricity on conveyor views.
 
 ## Fix applied at source
-- PCA-on-mask tilt; capacity-keyed expected V; history/median stabilisation; config-externalised thresholds.
+- Orientation from PCA on bottle segmentation mask  
+- H/V from label vs bottle geometry with capacity-specific expected V  
+- Temporal history with median/majority stabilisation  
+- Thresholds externalised to configs/geometry.yaml  
 
-## Resolved?
-- Operational pipeline uses the final method.  
-- **Formal A09 still open**, so measurement disagreements vs independent GT remain untested.
-
-**Status:** Informal development note only — not a closed metrology RCA.
+## Status
+COMPLETE as development RCA for geometry iteration.

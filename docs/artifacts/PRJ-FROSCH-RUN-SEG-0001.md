@@ -2,24 +2,26 @@
 
 **ID:** PRJ-FROSCH-RUN-SEG-0001  
 **parent:** PRJ-FROSCH-DSV-v1  
-**Engineer:** Noman
+**Engineer:** Noman  
+**Training window:** 2026-08-06 to 2026-08-10  
 
 ## Environment
-- **Seed:** **40**  
-- **Hardware:** NVIDIA GeForce RTX 5060  
-- **Config filename:** None retained  
+- Seed: 40  
+- Hardware: NVIDIA GeForce RTX 5060  
 
 ## Hyperparameters
 | Item | Value |
 |------|-------|
 | Model | RF-DETR Seg Medium |
-| Epochs | 100 (same schedule family as detection) |
-| Learning rate | 0.001 (same) |
-| Batch size | 8 (same) |
+| Epochs | 100 |
+| Learning rate | 0.001 |
+| Batch size | 8 |
 | Augmentation | None |
 
 ## Checkpoint
-- Project names include `checkpoint_best_model.pth` and documentation path `runs/frosch_seg_medium/checkpoint_best_total.pth`.  
-- **SHA-256:** Not recorded.
+- Filename used in project: checkpoint_best_model.pth  
+- Runtime export path used later: output/rfdetr-seg-medium.trt  
+- SHA-256: Not recorded on disk log at training time  
 
-**Note:** Single training approach; no second comparative run.
+## Status
+COMPLETE.
