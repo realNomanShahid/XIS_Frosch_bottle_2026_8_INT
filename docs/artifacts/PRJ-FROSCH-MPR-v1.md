@@ -19,8 +19,6 @@ Detection metrics below; segmentation used for masks in the live pipeline.
 | label | ~99% | ~100% | ~91% |
 | scratch | ~33% | ~21% | ~20% |
 
-Chart is the source; no separate numeric CSV export was retained beyond the chart and confusion matrix materials.
-
 ## Runtime thresholds (configs/detection.yaml)
 bottle 0.70; label 0.35; capacity 0.35; bump 0.50; damage 0.30; scratch 0.30
 
