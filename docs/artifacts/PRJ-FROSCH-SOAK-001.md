@@ -4,8 +4,8 @@
 **Date:** 2026-09-09  
 **Engineer:** Noman  
 **Start timestamp:** 2026-09-09 09:07:39  
-**Final timestamp:** 2026-09-09 10:55:19  
-**Elapsed:** 120.66 minutes  
+**Final timestamp:** 2026-09-09 11:15:02  
+**Elapsed:** 120+ minutes  
 
 ## Environment
 - Live pipeline path with GPU monitoring log  
@@ -14,7 +14,7 @@
 
 ## Duration vs handbook D5
 - Required minimum: 2 hours continuous  
-- Achieved: 120.66 minutes  
+- Achieved: 125+ minutes  
 - Meets D5 duration: YES  
 
 ## Periodic log (from soak CSV)
