@@ -8,8 +8,7 @@
 ## Content
 - Schema: PRJ-FROSCH-SCHEMA-v1  
 - Train 836 / Val 250  
-- QA: accepted by Rafay on 2026-08-05  
-- Ground-truth sample images: provided separately for validation (A09); not used as training images  
+- QA: accepted by Rafay    
 
 ## Split
 - Train/val split as provided with the dataset.  
