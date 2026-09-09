@@ -1,8 +1,7 @@
 # A14 — Decision Record
----
+
 **ID:** DEC-FROSCH-0001  
-**Decided by:** Noman  
-**Lead context:** Abdul Moiz  
+**Decided by:** Noman    
 **Date:** 2026-08-10  
 **Related artifacts:** A07,A17, A02
 ---
