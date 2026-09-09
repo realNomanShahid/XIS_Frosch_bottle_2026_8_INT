@@ -20,7 +20,12 @@ Detection metrics below; segmentation used for masks in the live pipeline.
 | scratch | ~33% | ~21% | ~20% |
 
 ## Runtime thresholds (configs/detection.yaml)
-bottle 0.70; label 0.35; capacity 0.35; bump 0.50; damage 0.30; scratch 0.30
+- bottle 0.70
+- label 0.35
+- capacity 0.35
+- bump 0.50
+- damage 0.30
+- scratch 0.30
 
 ## Inference performance samples
 | Metric | Value |
@@ -31,7 +36,7 @@ bottle 0.70; label 0.35; capacity 0.35; bump 0.50; damage 0.30; scratch 0.30
 | ONNX/CPU FPS | Not measured |
 
 ## Soak throughput evidence (A11)
-In 120.66 minutes: 1009 bottles completed (673 GOOD, 336 DEFECTIVE, 0 INCOMPLETE).
+In 120+ minutes: 1009 bottles completed (673 GOOD, 336 DEFECTIVE, 0 INCOMPLETE).
 
 ## Status
 COMPLETE.
