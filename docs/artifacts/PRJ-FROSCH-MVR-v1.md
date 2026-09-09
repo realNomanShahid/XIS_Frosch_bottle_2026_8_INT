@@ -9,8 +9,8 @@
 
 ## Ground-truth method
 - Ground-truth **sample images** were provided to the team.  
-- Validation was performed **by the project team against those ground-truth sample images**, using the Lead-defined thresholds for tilt, H offset, V offset, defects, and capacity behaviour.  
-- Instrument type: image-based ground-truth samples (not a separate contact gauge instrument).  
+- Validation was not performed directly by the engineer; it was conducted using the thresholds and values provided by the Lead, and the Lead confirmed the validation results.  
+  
 
 ## What was checked
 - Orientation / tilt decisions vs expected sample behaviour  
