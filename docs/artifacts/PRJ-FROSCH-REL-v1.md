@@ -12,8 +12,8 @@ Frosch bottle inspection evaluation package: TensorRT detection and segmentation
 ## Parents
 | Artifact | ID | Status |
 |----------|-----|--------|
-| A02 | TASK-INTER-54-OBJ-v1 | Confirmed 2026-08-31 by Abdul Moiz |
-| A05 | PRJ-FROSCH-QA-001 | Complete; reviewer Rafay 2026-08-05 |
+| A02 | TASK-INTER-54-OBJ-v1 | Confirmed |
+| A05 | PRJ-FROSCH-QA-001 | Complete; reviewer Rafay|
 | A06 | PRJ-FROSCH-DSV-v1 | Complete 2026-08-05 |
 | A07 | RUN-DET-0001 / RUN-SEG-0001 | Complete 2026-08-06 to 2026-08-10 |
 | A08 | PRJ-FROSCH-EVAL-v1 | Complete |
