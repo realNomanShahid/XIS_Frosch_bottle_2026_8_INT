@@ -7,7 +7,7 @@
 ## Sources
 - Dataset ID: frosch-bottle-5-ypv4gi  
 - Capture: Frosch bottles on conveyor belt, saved as images for training and evaluation.  
-- Annotation: Produced upstream; not annotated by Noman.  
+- Annotation: not annotated by Noman.  
 
 ## Counts
 | Split | Count |
