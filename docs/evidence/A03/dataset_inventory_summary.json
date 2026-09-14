@@ -1,0 +1,17 @@
+{
+  "project": "Frosch INTER-54",
+  "artifact": "A03",
+  "dataset_id": "frosch-bottle-5-ypv4gi",
+  "engineer": "Noman",
+  "inventory_date": "2026-08-05",
+  "splits": {
+    "train": 836,
+    "validation": 250,
+    "train_val_total": 1086
+  },
+  "sizes_ml": [100, 300, 500],
+  "classes": ["bottle", "label", "capacity", "bump", "damage", "scratch"],
+  "annotation_owner": "upstream (not engineer Noman)",
+  "stored_in_git": false,
+  "notes": "Counts and ID as recorded in docs/artifacts/PRJ-FROSCH-DS-INV-v1.md"
+}

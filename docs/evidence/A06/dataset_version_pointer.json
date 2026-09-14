@@ -1,0 +1,19 @@
+{
+  "project": "Frosch INTER-54",
+  "artifact": "A06",
+  "dataset_version_id": "PRJ-FROSCH-DSV-v1",
+  "issued": "2026-08-05",
+  "dataset_id": "frosch-bottle-5-ypv4gi",
+  "train": 836,
+  "validation": 250,
+  "qa_reviewer": "Abdul Rafay",
+  "parents": [
+    "PRJ-FROSCH-DS-INV-v1",
+    "PRJ-FROSCH-QA-001",
+    "PRJ-FROSCH-SCHEMA-v1"
+  ],
+  "underpins": [
+    "PRJ-FROSCH-RUN-DET-0001",
+    "PRJ-FROSCH-RUN-SEG-0001"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "dataset_dir": "/home/xisai-s1/Workspace/NomanShahid/Forsch_Segmentation/dataset",
+  "output_root": "/home/xisai-s1/Workspace/NomanShahid/Forsch_Segmentation/output",
+  "epochs": 50,
+  "batch_size": 4,
+  "grad_accum_steps": 4,
+  "lr": 0.0001,
+  "lr_encoder": 0.00015,
+  "num_workers": 8,
+  "resume": null,
+  "early_stopping": false,
+  "tensorboard": true,
+  "wandb": false,
+  "seed": 42,
+  "run_name": "rfdetr_seg_medium_20260805_145151",
+  "output_dir": "/home/xisai-s1/Workspace/NomanShahid/Forsch_Segmentation/output/rfdetr_seg_medium_20260805_145151",
+  "torch_version": "2.11.0+cu128",
+  "cuda_available": true,
+  "gpu_name": "NVIDIA GeForce RTX 5080"
+}
